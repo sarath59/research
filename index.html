@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Portfolio Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #result, #preview {
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        #result {
+            background-color: #f8f8f8;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+        #result pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        #preview iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 5px;
+        }
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .running-man {
+            font-size: 2rem;
+            display: inline-block;
+            animation: run 1s infinite linear;
+        }
+        @keyframes run {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
+        .error {
+            border-color: red !important;
+        }
+        .download-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .download-button:hover {
+            background-color: #45a049;
+        }
+        .code-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .code-container > div {
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-Powered Portfolio Generator</h1>
+            <p>Create a stunning, professional portfolio website tailored to your unique skills and experiences.</p>
+        </header>
+        <form id="portfolioForm">
+            <input type="text" id="name" placeholder="Your Full Name" required>
+            <input type="url" id="github_profile" placeholder="GitHub Profile URL" required>
+            <textarea id="project_names" placeholder="Project Names (comma-separated)" required></textarea>
+            <textarea id="skills" placeholder="Your Skills (comma-separated)" required></textarea>
+            <input type="text" id="color_preferences" placeholder="Color Preferences (comma-separated)" required>
+            <textarea id="bio" placeholder="Brief Bio (1-2 paragraphs)" required></textarea>
+            <button type="submit">Generate My Portfolio</button>
+        </form>
+        <div id="loading" class="loading">
+            <div class="running-man">🏃</div>
+            <p>Generating your portfolio...</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+        <div class="code-container">
+            <div id="result"></div>
+            <div id="preview"></div>
+        </div>
+    </div>
+    <script>
+        function validateForm() {
+            const inputs = document.querySelectorAll('#portfolioForm input, #portfolioForm textarea');
+            let isValid = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('error');
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+            return isValid;
+        }
+
+        document.getElementById('portfolioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateForm()) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const previewDiv = document.getElementById('preview');
+            const loadingDiv = document.getElementById('loading');
+            const progressBar = document.getElementById('progressBar');
+            resultDiv.textContent = '';
+            previewDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+            
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 2;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = `${progress}%`;
+            }, 1000);
+
+            const formData = {
+                name: document.getElementById('name').value,
+                github_profile: document.getElementById('github_profile').value,
+                project_names: document.getElementById('project_names').value,
+                skills: document.getElementById('skills').value,
+                color_preferences: document.getElementById('color_preferences').value,
+                bio: document.getElementById('bio').value
+            };
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'An error occurred');
+                }
+
+                const data = await response.json();
+                clearInterval(progressInterval);
+                loadingDiv.style.display = 'none';
+                progressBar.style.width = '100%';
+
+                if (data.result && data.result.content) {
+                    resultDiv.innerHTML = '<h2>Generated Code:</h2><pre><code class="html"></code></pre>';
+                    const codeElement = resultDiv.querySelector('code');
+                    codeElement.textContent = data.result.content;
+                    hljs.highlightElement(codeElement);
+                }
+
+                if (data.file) {
+                    previewDiv.innerHTML = '<h2>Preview:</h2>';
+                    const iframe = document.createElement('iframe');
+                    iframe.src = data.file;
+                    previewDiv.appendChild(iframe);
+
+                    // Add download button
+                    const downloadButton = document.createElement('a');
+                    downloadButton.href = `/download/${data.file}`;
+                    downloadButton.download = data.file;
+                    downloadButton.textContent = 'Download Portfolio';
+                    downloadButton.className = 'download-button';
+                    previewDiv.appendChild(downloadButton);
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                loadingDiv.style.display = 'none';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

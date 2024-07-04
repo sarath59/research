@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImmigrationIQ - Your Visa & Immigration Guide</title>
+    <meta name="description" content="Get expert answers to your immigration and visa questions. ImmigrationIQ provides up-to-date information on US immigration policies and procedures.">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uscis-blue: #003e7e;
+            --light-blue: #e1f5fe;
+            --white: #ffffff;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-blue);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        header {
+            background-color: var(--uscis-blue);
+            color: var(--white);
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--white);
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        main {
+            flex-grow: 1;
+            padding: 40px 0;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--uscis-blue);
+            margin-bottom: 30px;
+        }
+        
+        .question-form {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .question-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .question-form button {
+            background-color: var(--uscis-blue);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .question-form button:hover {
+            background-color: #002855;
+        }
+        
+        .answer-window {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .answer-window h2 {
+            color: var(--uscis-blue);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .answer-window ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .answer-window li {
+            margin-bottom: 8px;
+        }
+
+        .answer-window .disclaimer {
+            background-color: #f8f8f8;
+            border-left: 4px solid var(--uscis-blue);
+            padding: 10px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        .answer-window .error {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        footer {
+            background-color: var(--uscis-blue);
+            color: var(--white);
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto;
+        }
+        
+        .social-links a {
+            color: var(--white);
+            margin: 0 10px;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .passport-stamp {
+            width: 150px;
+            height: 150px;
+            border: 5px solid var(--uscis-blue);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--uscis-blue);
+            position: relative;
+            animation: stamp 2s infinite;
+        }
+        
+        .passport-stamp::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid var(--uscis-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes stamp {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">ImmigrationIQ</a>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <h1>Your Trusted Immigration Guide</h1>
+        <div class="question-form">
+            <input type="text" id="questionInput" placeholder="Ask your immigration question here...">
+            <button onclick="askQuestion()">Get Answer</button>
+        </div>
+        <div class="answer-window" id="answerWindow">
+            <h2>Expert Answer</h2>
+            <div id="answerText">Your answer will appear here. Ask a question to get started!</div>
+            <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                <div class="passport-stamp">
+                    PROCESSING
+                </div>
+                <p id="loadingText">Agent is gathering information...</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 ImmigrationIQ. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="LinkedIn">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function askQuestion() {
+            const questionInput = document.getElementById('questionInput');
+            const answerText = document.getElementById('answerText');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                alert('Please enter a question.');
+                return;
+            }
+            
+            loadingOverlay.style.display = 'flex';
+            answerText.innerHTML = 'Processing your question...';
+            
+            try {
+                loadingText.textContent = 'Agent is gathering information...';
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate gathering information
+                
+                loadingText.textContent = 'Agent is processing the question...';
+                const response = await fetch('/api/v1/immigration-question', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question }),
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        throw new Error('Invalid question. Please try rephrasing your query.');
+                    } else if (response.status === 500) {
+                        throw new Error('Server error. Our team has been notified and is working on it.');
+                    } else {
+                        throw new Error('An unexpected error occurred. Please try again later.');
+                    }
+                }
+                
+                const data = await response.json();
+                displayStructuredAnswer(data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                answerText.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        function displayStructuredAnswer(response) {
+            const answerText = document.getElementById('answerText');
+            
+            // Split the response into paragraphs
+            const paragraphs = response.split('\n\n');
+            
+            let structuredHTML = '';
+            
+            paragraphs.forEach((paragraph, index) => {
+                if (index === 0) {
+                    // Assume the first paragraph is an introduction
+                    structuredHTML += `<p>${paragraph}</p>`;
+                } else if (paragraph.toLowerCase().includes('disclaimer')) {
+                    // Format disclaimer differently
+                    structuredHTML += `<p class="disclaimer"><strong>Disclaimer:</strong> ${paragraph}</p>`;
+                } else {
+                    // Convert other paragraphs to list items
+                    const points = paragraph.split('\n').filter(point => point.trim() !== '');
+                    if (points.length > 1) {
+                        structuredHTML += '<ul>';
+                        points.forEach(point => {
+                            structuredHTML += `<li>${point.trim()}</li>`;
+                        });
+                        structuredHTML += '</ul>';
+                    } else {
+                        structuredHTML += `<p>${paragraph}</p>`;
+                    }
+                }
+            });
+            
+            answerText.innerHTML = structuredHTML;
+        }
+
+        // Add event listener for Enter key press
+        document.getElementById('questionInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                askQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
